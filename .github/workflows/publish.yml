@@ -27,24 +27,24 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push image to AWS ECR
+      id: ecr
       env: 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
-          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_DEV }}"' >> $GITHUB_ENV
+          export ECR_REPOSITORY=${{ secrets.AWS_ECR_DEV }}
         else
-          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_PROD }}"' >> $GITHUB_ENV
+          export ECR_REPOSITORY=${{ secrets.AWS_ECR_PROD }}
         fi
         # Build a docker container and push it to ECR
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "::set-output name=IMAGE::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     - name: Replace image in k8s configure
       run: |
-        echo "::set-env name=ECR_URL::${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}"
-        sed "s|\$ECR_IMAGE|${ECR_URL}|" k8s/deployment.yaml
+        sed "s|\$ECR_IMAGE|${{ steps.ecr.IMAGE }}|" k8s/deployment.yaml
         echo k8s/deployment.yaml
 
     - name: Deploy
