@@ -29,17 +29,10 @@ jobs:
     - name: Set env for building and deploying docker image
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
-          echo "ECR_REPOSITORY=action-test-dev" >> "$GITHUB_ENV"
+          echo "::set-env name=ECR_REPOSITORY::${{ secrets.AWS_ECR_DEV }}"
         else
-          echo "ECR_REPOSITORY=action-test-prod" >> "$GITHUB_ENV"
+          echo "::set-env name=ECR_REPOSITORY::${{ secrets.AWS_ECR_PROD }}"
         fi
-    
-    - name: Replace image in k8s configure
-      uses: jacobtomlinson/gha-find-replace@master
-      with:
-        find: "ECR_IMAGE"
-        replace: $IMAGE=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
-        include: "k8s/deployment.yaml" 
  
     - name: Build, tag, and push image to AWS ECR
       env: 
@@ -50,6 +43,12 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Replace image in k8s configure
+      run: |
+        echo "::set-env name=ECR_URL::${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}"
+        sed "s|\$ECR_IMAGE|${ECR_URL}|" k8s/deployment.yaml
+        echo k8s/deployment.yaml
 
     - name: Deploy
       run: |
