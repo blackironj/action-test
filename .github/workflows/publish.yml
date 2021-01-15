@@ -32,9 +32,9 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
-          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_DEV }}"'
+          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_DEV }}"' >> $GITHUB_ENV
         else
-          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_PROD }}"'
+          echo 'ECR_REPOSITORY="${{ secrets.AWS_ECR_PROD }}"' >> $GITHUB_ENV
         fi
         # Build a docker container and push it to ECR
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
