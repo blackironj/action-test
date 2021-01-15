@@ -20,7 +20,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ap-northeast-2 
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -32,7 +32,7 @@ jobs:
         IMAGE_TAG: ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
-          echo "ECR_REPOSITORY=action-test" >> "$GITHUB_ENV"
+          echo "ECR_REPOSITORY=action-test-dev" >> "$GITHUB_ENV"
         else
           echo "ECR_REPOSITORY=action-test-prod" >> "$GITHUB_ENV"
         fi
