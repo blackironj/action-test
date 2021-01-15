@@ -10,4 +10,3 @@ spec:
   selector:
     app: action-test-project
   type: LoadBalancer
-#  type: ClusterIP

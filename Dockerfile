@@ -2,9 +2,6 @@ FROM library/golang:1.13-alpine
 
 ENV GO111MODULE=on
 
-RUN apk add curl git
-# Godep for vendoring
-# Recompile the standard library without CGO
 RUN CGO_ENABLED=0 GOOS=linux go install -a std
 
 ENV APP_DIR $GOPATH/src/github.com/blackironj/action-test
