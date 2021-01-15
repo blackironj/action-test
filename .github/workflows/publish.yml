@@ -27,15 +27,15 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Set env for building and deploying docker image
-      env: 
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
           echo "ECR_REPOSITORY=action-test-dev" >> "$GITHUB_ENV"
         else
           echo "ECR_REPOSITORY=action-test-prod" >> "$GITHUB_ENV"
         fi
+        echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV"
+        echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV"
+
         sed -i.bak 's#ECR_URI#'"$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"'#' ./k8s/deployment.yaml
           
     - name: Build, tag, and push image to AWS ECR
