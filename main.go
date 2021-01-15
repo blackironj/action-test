@@ -30,7 +30,7 @@ func main() {
 	})
 
 	r.GET("/health", func(c *gin.Context) {
-		c.String(http.StatusOK, "I'm okay")
+		c.String(http.StatusOK, "OKay")
 	})
 
 	r.GET("/ws", func(c *gin.Context) {
