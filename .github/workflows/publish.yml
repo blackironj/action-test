@@ -40,12 +40,3 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=IMAGE::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-
-    - name: Replace image in k8s configure
-      run: |
-        sed "s|ECR_IMAGE|${{ steps.ecr.outputs.IMAGE }}|" k8s/deployment.yaml
-
-    - name: Deploy
-      run: |
-        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER }}
-        kubectl apply -f ./k8s/deployment.yaml -f ./k8s/service.yaml
