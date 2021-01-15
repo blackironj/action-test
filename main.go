@@ -15,15 +15,6 @@ var wsupgrader = websocket.Upgrader{
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLFiles("index.html")
-
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "index.html", nil)
-	})
-
-	r.GET("/test2", func(c *gin.Context) {
-		c.String(http.StatusOK, "I'm test2")
-	})
 
 	r.GET("/test", func(c *gin.Context) {
 		c.String(http.StatusOK, "I'm test")
