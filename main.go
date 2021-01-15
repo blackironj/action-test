@@ -33,7 +33,7 @@ func main() {
 		wshandler(c.Writer, c.Request)
 	})
 
-	r.Run("localhost:12312")
+	r.Run(":8080")
 }
 
 func wshandler(w http.ResponseWriter, r *http.Request) {
