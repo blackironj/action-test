@@ -20,6 +20,10 @@ func main() {
 		c.String(http.StatusOK, "I'm test")
 	})
 
+	r.GET("/hello", func(c *gin.Context) {
+		c.String(http.StatusOK, "Hello!!!")
+	})
+
 	r.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusOK, "i am okay")
 	})
