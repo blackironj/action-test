@@ -44,7 +44,7 @@ jobs:
 
     - name: Replace image in k8s configure
       run: |
-        sed -i "s/ECR_IMAGE/${{ steps.ecr.outputs.IMAGE }}/" k8s/deployment.yaml
+        sed "s|ECR_IMAGE|${{ steps.ecr.outputs.IMAGE }}|" k8s/deployment.yaml
 
     - name: Deploy
       run: |
