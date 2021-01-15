@@ -35,7 +35,7 @@ jobs:
         fi
     
     - name: Replace image in k8s configure
-      uses: datamonster/replace-action
+      uses: datamonster/replace-action@v2
       with:
         file: k8s/deployment.yaml
         replacements: '$IMAGE=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG'
