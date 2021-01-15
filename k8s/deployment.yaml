@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: action-test-project
-          image: $IMAGE
+          image: ECR_IMAGE
           ports:
             - containerPort: 8080
           imagePullPolicy: Always
