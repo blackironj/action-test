@@ -33,7 +33,12 @@ jobs:
         else
           echo "ECR_REPOSITORY=action-test-prod" >> "$GITHUB_ENV"
         fi
-        sed -i.bak 's#ECR_URI#'"$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"'#' ./k8s/deployment.yaml
+    
+    - name: Replace image in k8s configure
+      uses: datamonster/replace-action
+      with:
+        file: k8s/deployment.yaml
+        replacements: '$IMAGE=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG'
           
     - name: Build, tag, and push image to AWS ECR
       env: 
