@@ -30,14 +30,13 @@ jobs:
       env: 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
-        ECR_URI: $ECR_REGISTRY.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
           echo "ECR_REPOSITORY=action-test-dev" >> "$GITHUB_ENV"
         else
           echo "ECR_REPOSITORY=action-test-prod" >> "$GITHUB_ENV"
         fi
-        sed -i.bak 's#ECR_URI#'"$ECR_URI"'#' ./k8s/deployment.yaml
+        sed -i.bak 's#ECR_URI#'"$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"'#' ./k8s/deployment.yaml
           
     - name: Build, tag, and push image to AWS ECR
       run: |
@@ -48,5 +47,5 @@ jobs:
 
     - name: Deploy
       run: |
-        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER}}
+        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER }}
         kubectl apply -f ./k8s/deployment.yaml -f ./k8s/service.yaml
