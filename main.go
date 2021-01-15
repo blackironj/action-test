@@ -21,6 +21,10 @@ func main() {
 		c.HTML(200, "index.html", nil)
 	})
 
+	r.GET("/test", func(c *gin.Context) {
+		c.String(http.StatusOK, "I'm test")
+	})
+
 	r.GET("/health", func(c *gin.Context) {
 		c.String(http.StatusOK, "I'm okay")
 	})
