@@ -30,6 +30,7 @@ jobs:
       id: ecr
       env: 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG:  ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
           export ECR_REPOSITORY=${{ secrets.AWS_ECR_DEV }}
@@ -37,6 +38,16 @@ jobs:
           export ECR_REPOSITORY=${{ secrets.AWS_ECR_PROD }}
         fi
         # Build a docker container and push it to ECR
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-        echo "::set-output name=IMAGE::$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=IMAGE::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    - name: Replace image in k8s configure
+      run: perl -pi -e 's/ECR_IMAGE/"$ENV{IMAGE}"/' k8s/deployment.yaml
+      env:
+        IMAGE: ${{ steps.ecr.outputs.IMAGE }}
+
+    - name: Deploy
+      run: |
+        aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER }}
+        kubectl apply -f ./k8s/deployment.yaml -f ./k8s/service.yaml

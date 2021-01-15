@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: action-test-project-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: action-test-project
+  template:
+    metadata:
+      labels:
+        app: action-test-project
+    spec:
+      containers:
+        - name: action-test-project
+          image: ECR_IMAGE
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
