@@ -35,11 +35,11 @@ jobs:
         fi
     
     - name: Replace image in k8s configure
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "ECR_IMAGE"
-          replace: $IMAGE=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
-          include: "k8s/deployment.yaml" 
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: "ECR_IMAGE"
+        replace: $IMAGE=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG
+        include: "k8s/deployment.yaml" 
  
     - name: Build, tag, and push image to AWS ECR
       env: 
