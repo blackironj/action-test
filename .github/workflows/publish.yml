@@ -40,7 +40,7 @@ jobs:
     - name: Make docker image tag
       id: make-image-tag
       env:
-        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_REGION }}
+        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         IMAGE_TAG:  ${{ github.sha }}
       run: |
         if [[ $GITHUB_REF == 'refs/heads/dev' ]]; then
